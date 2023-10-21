@@ -40,10 +40,6 @@ module.exports.createUser = (req, res) => {
 module.exports.updateProfile = (req, res) => {
   const { name, about } = req.body;
 
-  if (name.length < 2 || about.length < 2) {
-    return res.status(BAD_REQUEST).send({ message: 'Переданы некорректные данные при обновлении профиля' });
-  }
-
   User.findByIdAndUpdate(
     req.user._id,
     {
@@ -60,7 +56,12 @@ module.exports.updateProfile = (req, res) => {
       }
       return res.send(user);
     })
-    .catch(() => res.status(SERVER_ERR).send({ message: 'Ошибка сервера' }));
+    .catch((err) => {
+      if (err.name === 'ValidationError') {
+        return res.status(BAD_REQUEST).send({ message: 'Переданы некорректные данные при обновлении профиля' });
+      }
+      return res.status(SERVER_ERR).send({ message: 'Ошибка сервера' });
+    });
 };
 
 /* обновление аватара */
