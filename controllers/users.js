@@ -20,7 +20,12 @@ module.exports.getUserById = (req, res) => {
       }
       return res.send(user);
     })
-    .catch(() => res.status(SERVER_ERR).send({ message: 'Ошибка сервера' }));
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        return res.status(BAD_REQUEST).send({ message: 'Некорректный _id' });
+      }
+      return res.status(SERVER_ERR).send({ message: 'Ошибка сервера' });
+    });
 };
 
 /* создание пользователя */
@@ -48,7 +53,10 @@ module.exports.updateProfile = (req, res) => {
         about,
       },
     },
-    { returnDocument: 'after' },
+    {
+      returnDocument: 'after',
+      runValidators: true,
+    },
   )
     .then((user) => {
       if (!user) {
@@ -72,7 +80,10 @@ module.exports.updateAvatar = (req, res) => User.findByIdAndUpdate(
       avatar: req.body.avatar,
     },
   },
-  { returnDocument: 'after' },
+  {
+    returnDocument: 'after',
+    runValidators: true,
+  },
 )
   .then((user) => {
     if (!user) {

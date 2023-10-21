@@ -35,7 +35,12 @@ module.exports.deleteCard = (req, res) => {
       }
       return res.send(card);
     })
-    .catch(() => res.status(SERVER_ERR).send({ message: 'Ошибка сервера' }));
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        return res.status(BAD_REQUEST).send({ message: 'Некорректный _id карточки' });
+      }
+      res.status(SERVER_ERR).send({ message: 'Ошибка сервера' })
+    });
 };
 
 /* лайк карточки */
@@ -54,6 +59,9 @@ module.exports.likeCard = (req, res) => {
     .catch((err) => {
       if (err.name === 'ValidationError') {
         return res.status(BAD_REQUEST).send({ message: 'Переданы некорректные данные для постановки лайка' });
+      }
+      if (err.name === 'CastError') {
+        return res.status(BAD_REQUEST).send({ message: 'Некорректный _id карточки' });
       }
       return res.status(SERVER_ERR).send({ message: 'Ошибка сервера' });
     });
@@ -75,6 +83,9 @@ module.exports.dislikeCard = (req, res) => {
     .catch((err) => {
       if (err.name === 'ValidationError') {
         return res.status(BAD_REQUEST).send({ message: 'Переданы некорректные данные для снятия лайка' });
+      }
+      if (err.name === 'CastError') {
+        return res.status(BAD_REQUEST).send({ message: 'Некорректный _id карточки' });
       }
       return res.status(SERVER_ERR).send({ message: 'Ошибка сервера' });
     });
