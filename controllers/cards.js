@@ -39,7 +39,7 @@ module.exports.deleteCard = (req, res) => {
       if (err.name === 'CastError') {
         return res.status(BAD_REQUEST).send({ message: 'Некорректный _id карточки' });
       }
-      res.status(SERVER_ERR).send({ message: 'Ошибка сервера' })
+      return res.status(SERVER_ERR).send({ message: 'Ошибка сервера' });
     });
 };
 
