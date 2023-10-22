@@ -1,8 +1,9 @@
 const Card = require('../models/card');
-
-const BAD_REQUEST = 400;
-const NOT_FOUND = 404;
-const SERVER_ERR = 500;
+const {
+  BAD_REQUEST,
+  NOT_FOUND,
+  SERVER_ERR,
+} = require('../utils/constants');
 
 /* возвращаем все карточки */
 module.exports.getCards = (req, res) => {
@@ -57,9 +58,6 @@ module.exports.likeCard = (req, res) => {
       return res.send(card);
     })
     .catch((err) => {
-      if (err.name === 'ValidationError') {
-        return res.status(BAD_REQUEST).send({ message: 'Переданы некорректные данные для постановки лайка' });
-      }
       if (err.name === 'CastError') {
         return res.status(BAD_REQUEST).send({ message: 'Некорректный _id карточки' });
       }
@@ -81,9 +79,6 @@ module.exports.dislikeCard = (req, res) => {
       return res.send(card);
     })
     .catch((err) => {
-      if (err.name === 'ValidationError') {
-        return res.status(BAD_REQUEST).send({ message: 'Переданы некорректные данные для снятия лайка' });
-      }
       if (err.name === 'CastError') {
         return res.status(BAD_REQUEST).send({ message: 'Некорректный _id карточки' });
       }
