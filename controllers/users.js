@@ -14,7 +14,7 @@ const { JWT_SECRET = 'secret-key' } = process.env;
 module.exports.getAllUsers = (req, res, next) => {
   User.find({})
     .then((users) => res.send(users))
-    .catch(next(new ServerError('Ошибка сервера')));
+    .catch(() => next(new ServerError('Ошибка сервера')));
 };
 
 /* возвращаем пользователя по id */
@@ -22,7 +22,7 @@ module.exports.getUserById = (req, res, next) => {
   User.findById(req.params.userId)
     .then((user) => {
       if (!user) {
-        next(NotFoundError('Пользователь по указанному _id не найден'));
+        next(new NotFoundError('Пользователь по указанному _id не найден'));
       }
       return res.send(user);
     })
@@ -39,7 +39,7 @@ module.exports.getCurrentUser = (req, res, next) => {
   User.findById(req.user._id)
     .then((user) => {
       if (!user) {
-        next(NotFoundError('Пользователь по указанному _id не найден'));
+        next(new NotFoundError('Пользователь по указанному _id не найден'));
       }
       return res.send(user);
     })
@@ -100,7 +100,7 @@ module.exports.updateProfile = (req, res, next) => {
   )
     .then((user) => {
       if (!user) {
-        next(NotFoundError('Пользователь по указанному _id не найден'));
+        next(new NotFoundError('Пользователь по указанному _id не найден'));
       }
       return res.send(user);
     })
@@ -127,7 +127,7 @@ module.exports.updateAvatar = (req, res, next) => User.findByIdAndUpdate(
 )
   .then((user) => {
     if (!user) {
-      next(NotFoundError('Пользователь по указанному _id не найден'));
+      next(new NotFoundError('Пользователь по указанному _id не найден'));
     }
     return res.send(user);
   })
@@ -149,8 +149,8 @@ module.exports.login = (req, res, next) => {
       res.cookie('jwt', token, {
         maxAge: 3600000 * 24 * 7,
         httpOnly: true,
-      })
-        .end();
+      });
+      res.send({ token });
     })
     .catch(next);
 };

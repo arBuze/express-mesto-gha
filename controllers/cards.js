@@ -7,9 +7,8 @@ const ServerError = require('../errors/ServerError');
 /* возвращаем все карточки */
 module.exports.getCards = (req, res, next) => {
   Card.find({})
-    .populate('owner')
     .then((cards) => res.send(cards))
-    .catch(next(new ServerError('Ошибка сервера')));
+    .catch(() => next(new ServerError('Ошибка сервера')));
 };
 
 /* создание карточки */
@@ -45,20 +44,6 @@ module.exports.deleteCard = (req, res, next) => {
       }
       next(new ServerError('Ошибка сервера'));
     });
-
-  /* Card.findByIdAndRemove(req.params.cardId)
-    .then((card) => {
-      if (!card) {
-        return res.status(NOT_FOUND).send({ message: 'Карточка с указанным _id не найдена' });
-      }
-      return res.send(card);
-    })
-    .catch((err) => {
-      if (err.name === 'CastError') {
-        return res.status(BAD_REQUEST).send({ message: 'Некорректный _id карточки' });
-      }
-      return res.status(SERVER_ERR).send({ message: 'Ошибка сервера' });
-    }); */
 };
 
 /* лайк карточки */
