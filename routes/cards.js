@@ -1,4 +1,5 @@
 const router = require('express').Router();
+const { celebrate, Joi } = require('celebrate');
 const {
   getCards,
   createCard,
@@ -6,11 +7,41 @@ const {
   likeCard,
   dislikeCard,
 } = require('../controllers/cards');
+const { urlRegex } = require('../utils/constants');
 
 router.get('/', getCards); /* возвращаем все карточки */
-router.post('/', createCard); /* создание карточки */
-router.delete('/:cardId', deleteCard); /* удаление карточки */
-router.put('/:cardId/likes', likeCard); /* лайк карточки */
-router.delete('/:cardId/likes', dislikeCard); /* снятие лайка */
+
+/* создание карточки */
+router.post(
+  '/',
+  celebrate({
+    body: Joi.object().keys({
+      name: Joi.string().required().min(2).max(30),
+      link: Joi.string().required().pattern(urlRegex),
+    }),
+  }),
+  createCard,
+);
+
+/* удаление карточки */
+router.delete('/:cardId', celebrate({
+  params: Joi.object().keys({
+    cardId: Joi.string().required().alphanum().length(24),
+  }),
+}), deleteCard);
+
+/* лайк карточки */
+router.put('/:cardId/likes', celebrate({
+  params: Joi.object().keys({
+    cardId: Joi.string().required().alphanum().length(24),
+  }),
+}), likeCard);
+
+/* снятие лайка */
+router.delete('/:cardId/likes', celebrate({
+  params: Joi.object().keys({
+    cardId: Joi.string().required().alphanum().length(24),
+  }),
+}), dislikeCard);
 
 module.exports = router;
