@@ -22,15 +22,15 @@ module.exports.getUserById = (req, res, next) => {
   User.findById(req.params.userId)
     .then((user) => {
       if (!user) {
-        next(new NotFoundError('Пользователь по указанному _id не найден'));
+        return next(new NotFoundError('Пользователь по указанному _id не найден'));
       }
       return res.send(user);
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        next(new BadRequestError('Некорректный _id'));
+        return next(new BadRequestError('Некорректный _id'));
       }
-      next(new ServerError('Ошибка сервера'));
+      return next(new ServerError('Ошибка сервера'));
     });
 };
 
@@ -39,15 +39,15 @@ module.exports.getCurrentUser = (req, res, next) => {
   User.findById(req.user._id)
     .then((user) => {
       if (!user) {
-        next(new NotFoundError('Пользователь по указанному _id не найден'));
+        return next(new NotFoundError('Пользователь по указанному _id не найден'));
       }
       return res.send(user);
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        next(new BadRequestError('Некорректный _id'));
+        return next(new BadRequestError('Некорректный _id'));
       }
-      next(new ServerError('Ошибка сервера'));
+      return next(new ServerError('Ошибка сервера'));
     });
 };
 
@@ -69,15 +69,20 @@ module.exports.createUser = (req, res, next) => {
       email,
       password: hash,
     }))
-    .then((user) => res.send(user))
+    .then(() => res.send({
+      name,
+      about,
+      avatar,
+      email,
+    }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        next(new BadRequestError('Переданы некорректные данные при создании пользователя'));
+        return next(new BadRequestError('Переданы некорректные данные при создании пользователя'));
       }
       if (err.code === 11000) {
-        next(new ConflictError('Пользователь с данным email уже существует'));
+        return next(new ConflictError('Пользователь с данным email уже существует'));
       }
-      next(new ServerError('Ошибка сервера'));
+      return next(new ServerError('Ошибка сервера'));
     });
 };
 
@@ -100,15 +105,15 @@ module.exports.updateProfile = (req, res, next) => {
   )
     .then((user) => {
       if (!user) {
-        next(new NotFoundError('Пользователь по указанному _id не найден'));
+        return next(new NotFoundError('Пользователь по указанному _id не найден'));
       }
       return res.send(user);
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        next(new BadRequestError('Переданы некорректные данные при обновлении профиля'));
+        return next(new BadRequestError('Переданы некорректные данные при обновлении профиля'));
       }
-      next(new ServerError('Ошибка сервера'));
+      return next(new ServerError('Ошибка сервера'));
     });
 };
 
@@ -127,15 +132,15 @@ module.exports.updateAvatar = (req, res, next) => User.findByIdAndUpdate(
 )
   .then((user) => {
     if (!user) {
-      next(new NotFoundError('Пользователь по указанному _id не найден'));
+      return next(new NotFoundError('Пользователь по указанному _id не найден'));
     }
     return res.send(user);
   })
   .catch((err) => {
     if (err.name === 'ValidationError') {
-      next(new BadRequestError('Переданы некорректные данные при обновлении аватара'));
+      return next(new BadRequestError('Переданы некорректные данные при обновлении аватара'));
     }
-    next(new ServerError('Ошибка сервера'));
+    return next(new ServerError('Ошибка сервера'));
   });
 
 /* логин */
