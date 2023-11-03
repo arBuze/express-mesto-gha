@@ -18,7 +18,58 @@ const validateSignUp = celebrate({
   }),
 });
 
+const validateGetUserById = celebrate({
+  params: Joi.object().keys({
+    userId: Joi.string().required().alphanum().length(24),
+  }),
+});
+
+const validateUpdateProfile = celebrate({
+  body: Joi.object().keys({
+    name: Joi.string().required().min(2).max(30),
+    about: Joi.string().required().min(2).max(30),
+  }),
+});
+
+const validateUpdateAvatar = celebrate({
+  body: Joi.object().keys({
+    avatar: Joi.string().required().pattern(urlRegex),
+  }),
+});
+
+const validateCreateCard = celebrate({
+  body: Joi.object().keys({
+    name: Joi.string().required().min(2).max(30),
+    link: Joi.string().required().pattern(urlRegex),
+  }),
+});
+
+const validateDeleteCard = celebrate({
+  params: Joi.object().keys({
+    cardId: Joi.string().required().alphanum().length(24),
+  }),
+});
+
+const validateLikeCard = celebrate({
+  params: Joi.object().keys({
+    cardId: Joi.string().required().alphanum().length(24),
+  }),
+});
+
+const validateDislikeCard = celebrate({
+  params: Joi.object().keys({
+    cardId: Joi.string().required().alphanum().length(24),
+  }),
+});
+
 module.exports = {
   validateSignIn,
   validateSignUp,
+  validateGetUserById,
+  validateUpdateProfile,
+  validateUpdateAvatar,
+  validateCreateCard,
+  validateDeleteCard,
+  validateLikeCard,
+  validateDislikeCard,
 };
