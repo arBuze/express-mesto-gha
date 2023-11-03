@@ -1,5 +1,6 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const { HTTP_STATUS_CREATED } = require('http2').constants;
 const User = require('../models/user');
 
 /* ошибки */
@@ -69,7 +70,7 @@ module.exports.createUser = (req, res, next) => {
       email,
       password: hash,
     }))
-    .then(() => res.send({
+    .then(() => res.status(HTTP_STATUS_CREATED).send({
       name,
       about,
       avatar,
